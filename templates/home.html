@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Main Page</title>
+</head>
+<body>
+    <h1>Welcome, {{ username }}</h1>
+    <p>Enter your text to get feedback on the 6-P:</p>
+    <form method="POST" action="/feedback">
+        <textarea name="user_text" rows="5" cols="50" required></textarea>
+        <br>
+        <button type="submit">Send</button>
+    </form>
+    <p><a href="{{ url_for('logout') }}">Log out</a></p>
+</body>
+</html>

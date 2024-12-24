@@ -1,0 +1,7 @@
+# Archivos temporales
+*.log
+*.tmp
+
+# Carpetas específicas
+/node_modules
+/.vscode
