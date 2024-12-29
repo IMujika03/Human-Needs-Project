@@ -8,38 +8,53 @@ import os
 import bcrypt
 from utils.password_utils import is_common_password
 
-# Configuración de la aplicación Flask
+# Flask app configuration
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database/users.db'
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "database/users.db")}'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# Modelo de Usuario
+# User model
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(200), nullable=False)
 
-# Función para validar contraseñas comunes
+# Function to validate common passwords
 def validate_password(form, field):
     if is_common_password(field.data):
         raise ValidationError('Common password, try other.')
 
-# Formularios de Registro e Inicio de Sesión
+
+# Registration and Login Forms
 class RegisterForm(FlaskForm):
     username = StringField('User', validators=[DataRequired(), Length(min=4, max=100)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6), validate_password])
     confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign up')
 
+
 class LoginForm(FlaskForm):
     username = StringField('User', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Log in')
 
-# Rutas
+# Routes
+@app.route('/')
+def index():
+    if 'username' in session:
+        return redirect(url_for('home'))
+    return redirect(url_for('login'))
+
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -51,6 +66,8 @@ def register():
         flash('Account created successfully. Log in now.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,11 +82,14 @@ def login():
             flash('Incorrect username or password.', 'danger')
     return render_template('login.html', form=form)
 
+
+
 @app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'username' not in session:
         return redirect(url_for('login'))
     return render_template('home.html', username=session['username'])
+
 
 @app.route('/logout')
 def logout():
@@ -78,6 +98,6 @@ def logout():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Crea la base de datos si no existe
+        db.create_all()  # Creates the database if it does not exist
     app.run(debug=True)
  
