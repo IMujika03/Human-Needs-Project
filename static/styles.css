@@ -24,6 +24,7 @@ body {
 .navbar .logo {
     font-size: 20px;
     font-weight: bold;
+	margin-right: 20px;
 }
 
 .navbar ul {
@@ -279,8 +280,37 @@ input[type="password"] {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+	width: 100%;
 }
 
 .btn:hover {
     background-color: #666;
+}
+
+.register-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none; 
+	margin-top: 10px;
+}
+.register-btn:hover {
+	background-color: #777;
+}
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%; /* Ocupa todo el ancho disponible */
+    padding: 10px; /* Añade espacio interno */
+    margin-bottom: 15px; /* Espacio entre los campos */
+    border: none; 
+    border-radius: 5px; /* Esquinas redondeadas */
+    box-sizing: border-box; /* Incluye padding y border en el ancho */
 }

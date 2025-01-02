@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import bcrypt
 from utils.password_utils import is_common_password
+import sqlite3
 
 # Flask app configuration
 

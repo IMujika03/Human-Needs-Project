@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>6P Text Tool</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header class="navbar">
         <div class="logo">Human Needs Tool</div>
         <nav>
-            <ul>
+            <ul class="center-nav">
                 <li><a href="/">Home</a></li>
                 <li><a href="/tools">Choose Tool</a></li>
             </ul>
         </nav>
+		<div class="right-nav">
+        <a href="/logout" class="logout-button">Log Out</a>
+		</div>
     </header>
 
     <main class="text-tool">

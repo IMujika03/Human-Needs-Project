@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tool Selector</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <header class="navbar">
         <div class="logo">Human Needs Tool</div>
         <nav>
-            <ul class="center-nav>
+            <ul class="center-nav">
                 <li><a href="/">Home</a></li>
                 <li><a href="/tools">Choose Tool</a></li>
             </ul>
