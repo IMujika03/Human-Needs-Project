@@ -26,13 +26,13 @@
             <div class="tools">
                 <!-- Text Tool -->
                 <div class="tool-card" onclick="location.href='/tools/text'">
-                    <img src="images/library.jpeg" alt="Book Icon" style="max-width: 100%; height: auto;">
-                    <h2>Text</h2>
+                    <img src="{{ url_for('static', filename='images/library.jpeg') }}" alt="Book Icon" style="max-width: 100%; height: auto;">
+					<h2>Text</h2>
                 </div>
                 <!-- Image Tool -->
                 <div class="tool-card" onclick="location.href='/tools/image'">
-                    <img src="images/building.jpeg" alt="Building Icon" style="max-width: 100%; height: auto;">
-                    <h2>Image</h2>
+                    <img src="{{ url_for('static', filename='images/building.jpeg') }}" alt="Building Icon" style="max-width: 100%; height: auto;">
+					<h2>Image</h2>
                 </div>
             </div>
         </div>

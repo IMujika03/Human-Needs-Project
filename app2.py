@@ -41,13 +41,18 @@ def login():
         user = c.fetchone()
         conn.close()
 
-        if user and bcrypt.check_password_hash(user[email], password):  # Password is in the 3rd column
-            session['user'] = email
-            flash('Login successful!', 'success')
-            return redirect(url_for('tools'))
+        #if user and bcrypt.check_password_hash(user[2], password):  # Password is in the 3rd column
+        if user:
+            hashed_password = user[3]
+            if bcrypt.check_password_hash(hashed_password, password):
+            
+                session['user'] = email
+                flash('Login successful!', 'success')
+                return redirect(url_for('tools'))
         else:
             flash('Invalid email or password', 'error')
-            return redirect(url_for('login'))
+        
+        return redirect(url_for('login'))
 
     return render_template('login.html')
 
