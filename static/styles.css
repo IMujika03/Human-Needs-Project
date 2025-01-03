@@ -314,3 +314,25 @@ input[type="password"] {
     border-radius: 5px; /* Esquinas redondeadas */
     box-sizing: border-box; /* Incluye padding y border en el ancho */
 }
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.flashes li {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    color: black;
+	font-weight: bold;
+}
+
+.flashes li.error {
+    background-color: #e74c3c;
+}
+
+.flashes li.success {
+    background-color: #2ecc71;
+}

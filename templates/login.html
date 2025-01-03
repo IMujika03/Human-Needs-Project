@@ -5,18 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script>
-        // Limpia las casillas al cargar la página
-        document.addEventListener('DOMContentLoaded', () => {
-            const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
-            inputs.forEach(input => input.value = '');
-        });
-
-        // Mostrar alerta si hay un mensaje flash
-        function showAlert(message) {
-            alert(message);
-        }
-    </script>
+    
 </head>
 <body>
     <header class="navbar">
@@ -27,7 +16,15 @@
             </ul>
         </nav>
     </header>
-    
+     {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <!-- Login Page -->
     <main class="login">
         <div class="login-box">

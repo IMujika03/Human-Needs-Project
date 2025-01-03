@@ -1,104 +1,134 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
-from werkzeug.security import generate_password_hash, check_password_hash
-import os
-import bcrypt
-from utils.password_utils import is_common_password
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask_bcrypt import Bcrypt
 import sqlite3
-
-# Flask app configuration
+from functools import wraps
+from datetime import timedelta
+import os
+from utils.password_utils import is_common_password
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret_key_here'
+app.secret_key = os.urandom(24).hex()
+bcrypt = Bcrypt(app)
+app.permanent_session_lifetime = timedelta(minutes=5)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "database/users.db")}'
+# Database initialization
+def init_db():
+    conn = sqlite3.connect('users.db')
+    c = conn.cursor()
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+init_db()
 
-db = SQLAlchemy(app)
-
-# User model
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(200), nullable=False)
-
-# Function to validate common passwords
-def validate_password(form, field):
-    if is_common_password(field.data):
-        raise ValidationError('Common password, try other.')
-
-
-# Registration and Login Forms
-class RegisterForm(FlaskForm):
-    username = StringField('User', validators=[DataRequired(), Length(min=4, max=100)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=6), validate_password])
-    confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Sign up')
-
-
-class LoginForm(FlaskForm):
-    username = StringField('User', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Log in')
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            #flash("Log in first, Please.")
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Routes
 @app.route('/')
-def index():
-    if 'username' in session:
-        return redirect(url_for('home'))
-    return redirect(url_for('login'))
-
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt())
-        new_user = User(username=form.username.data, password_hash=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Account created successfully. Log in now.', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
-
-
+def home():
+    if 'user' in session:
+        return redirect(url_for('tools'))  
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and bcrypt.checkpw(form.password.data.encode('utf-8'), user.password_hash):
-            session['username'] = user.username
-            flash('Login successful.', 'success')
-            return redirect(url_for('home'))
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        conn = sqlite3.connect('users.db')
+        c = conn.cursor()
+        c.execute('SELECT * FROM users WHERE email = ?', (email,))
+        user = c.fetchone()
+        conn.close()
+
+        #if user and bcrypt.check_password_hash(user[2], password):  # Password is in the 3rd column
+        if user:
+            hashed_password = user[3]
+            if bcrypt.check_password_hash(hashed_password, password):
+                session.permanent = True
+                session['user'] = email
+                session['logged_in'] = True
+                flash('Login successful!', 'success')
+                return redirect(url_for('tools'))
         else:
-            flash('Incorrect username or password.', 'danger')
-    return render_template('login.html', form=form)
-
-
-
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    if 'username' not in session:
+            flash('Invalid email or password', 'error')
+        
         return redirect(url_for('login'))
-    return render_template('home.html', username=session['username'])
 
+    return render_template('login.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = sqlite3.connect('users.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE email = ?", (email,))
+        existing_user = c.fetchone()
+        conn.close()
+        
+        if existing_user:
+            flash("Your email address is already registered. Please use another one or log in.", "error")
+            return redirect('/register')
+        
+        if is_common_password(password):
+            flash("The password is too easy to guess. Please choose another one.", "error")
+            return redirect('/register')
+        
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        conn = sqlite3.connect('users.db')
+        c = conn.cursor()
+        try:
+            c.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+                      (username, email, hashed_password))
+            conn.commit()
+            flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('Email already exists.', 'danger')
+        finally:
+            conn.close()
+
+    return render_template('register.html')
+
+@app.route('/tools')
+@login_required
+def tools():
+    #if 'user' not in session:
+        #return redirect(url_for('login'))
+    return render_template('tools.html')
+    
+@app.route('/tools/text')
+@login_required
+def text_tool():
+    #if 'user' not in session:
+    #    return redirect(url_for('login'))
+    return render_template('text-tool.html')
+    
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
-    return redirect(url_for('login'))
+    #session.pop('user_id', None)
+    session.clear()
+    flash('Logged out successfully.', 'info')
+    return redirect('/')
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()  # Creates the database if it does not exist
     app.run(debug=True)
- 

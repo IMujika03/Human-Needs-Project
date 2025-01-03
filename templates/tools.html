@@ -12,14 +12,21 @@
         <nav>
             <ul class="center-nav">
                 <li><a href="/">Home</a></li>
-                <li><a href="/tools">Choose Tool</a></li>
             </ul>
         </nav>
 		<div class="right-nav">
         <a href="/logout" class="logout-button">Log Out</a>
 		</div>
     </header>
-    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <main class="tool-selector">
         <div class="options-box">
             <h1>Options</h1>
