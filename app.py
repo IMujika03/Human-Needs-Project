@@ -65,7 +65,7 @@ def login():
                 flash('Login successful!', 'success')
                 return redirect(url_for('tools'))
         else:
-            flash('Invalid email or password', 'error')
+            flash("Invalid email or password", "error")
         
         return redirect(url_for('login'))
 
@@ -127,7 +127,7 @@ def text_tool():
 def logout():
     #session.pop('user_id', None)
     session.clear()
-    flash('Logged out successfully.', 'info')
+    #flash('Logged out successfully.', 'info')
     return redirect('/')
 
 if __name__ == '__main__':
