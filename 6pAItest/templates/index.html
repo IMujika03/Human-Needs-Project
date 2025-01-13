@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6P Method Evaluation</title>
+</head>
+<body>
+  <h1>Evaluate Text Using the 6P Method</h1>
+  <form id="evaluationForm">
+    <label for="userText">Enter your text:</label><br>
+    <textarea id="userText" rows="10" cols="50" placeholder="Write your text here..."></textarea><br><br>
+    <button type="submit">Evaluate</button>
+  </form>
+  <h2>Feedback:</h2>
+  <pre id="feedback"></pre>
+
+  <script>
+    document.getElementById("evaluationForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const userText = document.getElementById("userText").value;
+
+      if (!userText) {
+        alert("Please enter some text.");
+        return;
+      }
+
+      try {
+        const response = await fetch("/evaluate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: userText }),
+        });
+
+        const data = await response.json();
+        document.getElementById("feedback").textContent = data.feedback;
+      } catch (error) {
+        console.error("Error:", error);
+        document.getElementById("feedback").textContent = "An error occurred.";
+      }
+    });
+  </script>
+</body>
+</html>
