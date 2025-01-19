@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from groq import Groq
 
 # Load environment variables
-load_dotenv()
+load_dotenv() # We are not using this
 
 
 app = Flask(__name__)
@@ -13,22 +13,29 @@ app = Flask(__name__)
 # client = Groq(api_key=GROQ_API_KEY)
 # print(f"Loaded API Key: {GROQ_API_KEY}")
 client = Groq(
-    api_key="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",  # Replace with your actual API key
+    api_key="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",  # Here I pasted an API key to use Groq AI
 )
+
+# Render the index.html file (main page)
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html") 
 
+
+# process the text input and send it to Groq API for evaluation
 @app.route("/evaluate", methods=["POST"])
 def evaluate_text():
+    # get the user text from the textbox
     data = request.get_json()
     user_text = data.get("text")
 
+    # if there is no text print this
     if not user_text:
         return jsonify({"feedback": "Text is required for evaluation."}), 400
 
     try:
         # Groq API request
+        # It will say to Groq to be an evaluator
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[
