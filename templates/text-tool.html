@@ -12,7 +12,6 @@
         <nav>
             <ul class="center-nav">
                 <li><a href="/">Home</a></li>
-                <li><a href="/tools">Choose Tool</a></li>
             </ul>
         </nav>
 		<div class="right-nav">
@@ -23,8 +22,10 @@
     <main class="text-tool">
         <div class="tool-container">
             <h1>6P Text Tool</h1>
-            <textarea placeholder="Enter your Project text here..."></textarea>
-            <button class="btn">Submit</button>
+            <form action="/analyze-text" method="POST">
+                <textarea name="text_input" placeholder="Enter your Project text here..." required></textarea>
+                <button type="submit" class="btn">Submit</button>
+            </form>
         </div>
     </main>
 </body>

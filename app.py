@@ -1,16 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_bcrypt import Bcrypt
+#from flask_limiter import Limiter
+#from flask_limiter.util import get_remote_address
 import sqlite3
 from functools import wraps
 from datetime import timedelta
 import os
 from utils.password_utils import is_common_password
+import numpy as np
+#import prediction_module
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24).hex()
 bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
+#limiter = Limiter(
+#    key_func=get_remote_address,
+#    app=app,
+#    default_limits=["5 per minute"]
+#)
 # Database initialization
 def init_db():
     conn = sqlite3.connect('users.db')
@@ -64,14 +73,16 @@ def login():
                 session['logged_in'] = True
                 flash('Login successful!', 'success')
                 return redirect(url_for('tools'))
+            else:
+                flash("Invalid email or password", "error")
         else:
             flash("Invalid email or password", "error")
-        
         return redirect(url_for('login'))
 
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
+#@limiter.limit("5 per minute")
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -129,6 +140,27 @@ def logout():
     session.clear()
     #flash('Logged out successfully.', 'info')
     return redirect('/')
+
+@app.route('/analyze-text', methods=['POST'])
+@login_required
+def analyze_text():
+    if request.method == "POST":
+        text_input = request.form['text_input']
+        
+        #predicted_percentages = prediction_module.predict(text_input)
+        
+        #return redirect(url_for('feedback', actual_values=predicted_percentages))
+        
+@app.route('/feedback')
+@login_required
+def feedback():
+    optimal_values = [40, 30, 20, 10, 5, 2]  
+    actual_values = request.args.get('actual_values', [0, 0, 0, 0, 0, 0])
+    
+    
+    actual_values = [float(x) for x in actual_values.split(',')]
+    
+    return render_template('feedback.html', optimal_values=optimal_values, actual_values=actual_values)
 
 if __name__ == '__main__':
     app.run(debug=True)
