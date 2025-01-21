@@ -9,6 +9,7 @@ import os
 from utils.password_utils import is_common_password
 import numpy as np
 from groq import Groq
+import re
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24).hex()
@@ -191,6 +192,7 @@ def feedback():
                         "Then the sum of Variation Significance and Growth 39 with error of 2. And the sum of Certainty Connectedness and Contributions 61 with error of 2"
                         "If all of these conditions are met, then the system is cosidered balanced, if not - not balanced"
                         "The feedback structure should be like that: first is the entity name, then explanation , and the its score at the end, for example: Signifance: 'Explanation' . Score: 25 , then there will be the sums of each combination where it will show if it's within the error margin or not, for example: Certainty + Variation + Coonectedness= 67 (the ideal result is 80+-2, it is unbalanced)"
+                        "And the final advice should tell if system is balanced or not balanced. And if it is not balanced give the quick explanation why it is not balanced and how to fix it."
                     ),
                 },
                 {
@@ -206,9 +208,15 @@ def feedback():
 
         # Extract feedback from the API response
         feedback = response.choices[0].message.content
+        scores = re.findall(r'Score:\s(\d+)', feedback)
+        
+        scores = list(map(int, scores))
+        print(scores)
         print(f"Feedback: {feedback}")  # Debug line
+        if len(scores) != 6:
+            raise ValueError("No se extrajeron los 6 puntajes esperados.")
         #return jsonify({"feedback": feedback})
-        return render_template('feedback.html', feedback=feedback)
+        return render_template('feedback.html', feedback=feedback, scores=scores)
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"feedback": "Failed to evaluate text. Please try again."}), 500

@@ -344,20 +344,21 @@ input[type="password"] {
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: 'Arial', sans-serif; /* Cambié la fuente a Arial */
-    font-weight: bold; /* Lo hice en negrita */
+    font-family: 'Arial', sans-serif; 
+    font-weight: bold; 
 }
 
 .center-title {
-    text-align: center; /* Centra el texto */
-    font-size: 24px; /* Tamaño de la fuente */
-    margin-top: 20px; /* Asegura que esté un poco separado del borde superior */
+    text-align: center; 
+    font-size: 24px; 
+    margin-top: 20px; 
 }
 
 .feedback-text {
-    background-color: #e0e0e0; /* Tono gris claro */
-    padding: 20px; /* Añadir espacio alrededor del contenido */
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+    background-color: #e0e0e0;
+    padding: 20px; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+	margin-top: 20px;
 }
 
