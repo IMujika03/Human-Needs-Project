@@ -22,11 +22,13 @@
     <main class="text-tool">
         <div class="tool-container">
             <h1>6P Text Tool</h1>
-            <form action="/analyze-text" method="POST">
-                <textarea name="text_input" placeholder="Enter your Project text here..." required></textarea>
+            <form id="evaluationForm" method="POST" action="/tools/text" >
+                <textarea id="userText" name="text_input" placeholder="Enter your Project text here..." required></textarea>
                 <button type="submit" class="btn">Submit</button>
             </form>
         </div>
     </main>
+    
+
 </body>
 </html>

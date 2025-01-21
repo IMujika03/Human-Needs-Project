@@ -1,25 +1,37 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_bcrypt import Bcrypt
-#from flask_limiter import Limiter
-#from flask_limiter.util import get_remote_address
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sqlite3
 from functools import wraps
 from datetime import timedelta
 import os
 from utils.password_utils import is_common_password
 import numpy as np
-#import prediction_module
+from groq import Groq
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24).hex()
 bcrypt = Bcrypt(app)
 app.permanent_session_lifetime = timedelta(minutes=5)
 
-#limiter = Limiter(
-#    key_func=get_remote_address,
-#    app=app,
-#    default_limits=["5 per minute"]
-#)
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    #default_limits=["5 per minute"]
+)
+
+# Load test data from a .txt file
+with open("trainingData.txt", "r",encoding="utf-8") as f:
+    test_data_content = f.read()
+    
+
+#use Groq API
+client = Groq(
+    api_key="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",  # Replace with your actual API key
+)
+
+
 # Database initialization
 def init_db():
     conn = sqlite3.connect('users.db')
@@ -54,6 +66,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute", key_func=get_remote_address)
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -82,7 +95,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])
-#@limiter.limit("5 per minute")
+@limiter.limit("5 per minute", key_func=get_remote_address)
 def register():
     if request.method == 'POST':
         username = request.form['username']
@@ -123,44 +136,89 @@ def register():
 @app.route('/tools')
 @login_required
 def tools():
-    #if 'user' not in session:
-        #return redirect(url_for('login'))
+
     return render_template('tools.html')
     
-@app.route('/tools/text')
+@app.route('/tools/text', methods=['GET', 'POST'])
 @login_required
 def text_tool():
-    #if 'user' not in session:
-    #    return redirect(url_for('login'))
+    if request.method == 'POST':
+        text_input = request.form['text_input']  # Get text from the form
+        # Process the text and redirect to the feedback page
+        return redirect(url_for('feedback', text=text_input))
+        
     return render_template('text-tool.html')
     
 @app.route('/logout')
 def logout():
-    #session.pop('user_id', None)
     session.clear()
-    #flash('Logged out successfully.', 'info')
     return redirect('/')
 
-@app.route('/analyze-text', methods=['POST'])
-@login_required
-def analyze_text():
-    if request.method == "POST":
-        text_input = request.form['text_input']
+#@app.route('/analyze-text', methods=['POST'])
+#@login_required
+#def analyze_text():
+#    if request.method == "POST":
+#        text_input = request.form['text_input']
         
         #predicted_percentages = prediction_module.predict(text_input)
         
         #return redirect(url_for('feedback', actual_values=predicted_percentages))
         
-@app.route('/feedback')
+@app.route('/feedback', methods=['GET'])
 @login_required
 def feedback():
-    optimal_values = [40, 30, 20, 10, 5, 2]  
-    actual_values = request.args.get('actual_values', [0, 0, 0, 0, 0, 0])
-    
-    
-    actual_values = [float(x) for x in actual_values.split(',')]
-    
-    return render_template('feedback.html', optimal_values=optimal_values, actual_values=actual_values)
+    #if request.method == 'POST':
+    #    data = request.get_json()
+    #    user_text = data.get("text")
+    #else:
+    user_text = request.args.get("text")  # Use GET to get text
+
+    if not user_text:
+        return jsonify({"feedback": "Text is required for evaluation."}), 400
+
+    try:
+           # Groq API request
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an evaluator using the 6P method "
+                        "(Certainty, Variation, Connectedness, Significance, Contributions, and Growth). "
+                        "Use the provided training data to guide your evaluation. To be balanced the sum of Certainty Variation and Connectedness should be 80 with error of 2"
+                        "And the sum of Significance Contributions and Growth should be 20 wiht error of 2. "
+                        "Then the sum of Variation Significance and Growth 39 with error of 2. And the sum of Certainty Connectedness and Contributions 61 with error of 2"
+                        "If all of these conditions are met, then the system is cosidered balanced, if not - not balanced"
+                        
+                    ),
+                },
+                {
+                    "role": "system",
+                    "content": f"Training data: {test_data_content}",
+                },
+                {
+                    "role": "user",
+                    "content": user_text,
+                },
+            ],
+        )
+
+        # Extract feedback from the API response
+        feedback = response.choices[0].message.content
+        print(f"Feedback: {feedback}")  # Debug line
+        #return jsonify({"feedback": feedback})
+        return render_template('feedback.html', feedback=feedback)
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"feedback": "Failed to evaluate text. Please try again."}), 500
+
+
+@app.route('/tools/image')
+@login_required
+def image_tool():
+    return render_template('image-tool.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

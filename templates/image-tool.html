@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback</title>
+    <title>Image Tool</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 </head>
 <body>
     <header class="navbar">
@@ -15,19 +14,16 @@
                 <li><a href="/">Home</a></li>
             </ul>
         </nav>
-		<div class="right-nav">
-        <a href="/logout" class="logout-button">Log Out</a>
-		</div>
+        <div class="right-nav">
+            <a href="/logout" class="logout-button">Log Out</a>
+        </div>
     </header>
 
-
-    <main>
-    <h2 class="center-title">Results</h2>
-    <div class="feedback-text">
-        <p>{{ feedback }}</p>
-    </div>
-</main>
-
-    
+    <main class="tool-selector">
+        <div class="options-box">
+            <h1>Image Tool</h1>
+            <p style="text-align: center; font-size: 18px;">This feature is coming soon!</p>
+        </div>
+    </main>
 </body>
 </html>
