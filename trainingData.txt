@@ -37,3 +37,20 @@ The drought had lasted now for ten million years, and the reign of the terrible 
 
 Katherine knelt down and retrieved the hat, handed it over to Melissa. “You know, I used to have a hat kind of like this. It was a little too big for me, so I’d run into stuff all the time.  The trick is you’ve got to angle it up, like this.” She placed it on Melissa’s head slantways, the front brim almost perpendicular to the sky. “Plus, if you keep the brim away from your eyes, you can catch sight of a whale better.  Around here, you’re looking for a gray whale.  They leave big splashes that you can see from miles away, so watch the horizon. Or sometimes they’re sneaky, and do this thing called spy hopping, where they’ll just peek their heads out enough to see where they are. Watch for that too.”
 {Certainty=30, Variation=25, Connectedness=20, Significance=15, Contrubutions=5, Growth=5}
+;;;
+
+The beaming industrial lights flickered on, filling the concrete basement with a white, artificial glow. Josh stood in the corner beside an unassuming steel door, low to the ground, about five feet in height and width, nearly small enough to be a trapdoor. His right hand was on a power switch, and his phone was in his left hand, facing Michael and the boys. On it was a photo of Michael lying in his underwear on the couch upstairs beside a woman in lingerie—Ruth.
+{Certainty=20, Variation=40, Connectedness=25, Significance=10, Contrubutions=5, Growth=0}
+;;;
+
+Frozen puddles and sleet greeted them as they stepped into the icy air. “Rockin’ Around the Christmas Tree” boomed from a house a few blocks away, near Genie’s. Thick snow fell, and salt crunched under their feet as Stacy and Jeremy stayed close, slinking through the inky darkness between the dim streetlights. Genie answered the door angrily.
+{Certainty=32, Variation=28, Connectedness=24, Significance=16, Contrubutions=0, Growth=0}
+;;;
+
+There was a wall. It did not look important. It was built of uncut rocks roughly mortared. An adult could look right over it, and even a child could climb it. Where it crossed the roadway, instead of having a gate it degenerated into mere geometry, a line, an idea of a boundary. But the idea was real. It was important. For seven generations there had been nothing in the world more important than that wall.
+{Certainty=31, Variation=31, Connectedness=19, Significance=19, Contrubutions=0, Growth=0}
+;;;
+
+The woman sent a photo of her holding her exposed breasts and smiling at the camera. On the table in the corner of the photo was a small picture of her with Chris. The caption in a colorful, whimsical font on the bottom of the frame read: Walt Disney World Family Trip!
+{Certainty=8, Variation=22, Connectedness=14, Significance=12, Contrubutions=10, Growth=8}
+
