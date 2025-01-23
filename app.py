@@ -187,12 +187,13 @@ def feedback():
                     "content": (
                         "You are an evaluator using the 6P method "
                         "(Certainty, Variation, Connectedness, Significance, Contributions, and Growth). "
-                        "Use the provided training data to guide your evaluation. To be balanced the sum of Certainty Variation and Connectedness should be 80 with error of 2"
-                        "And the sum of Significance Contributions and Growth should be 20 wiht error of 2. "
-                        "Then the sum of Variation Significance and Growth 39 with error of 2. And the sum of Certainty Connectedness and Contributions 61 with error of 2"
+                        "Use the provided training data to guide your evaluation. To be balanced the sum of Certainty Variation and Connectedness should be 80% with error of 2"
+                        "And the sum of Significance Contributions and Growth should be 20% wiht error of 2. "
+                        "Then the sum of Variation Significance and Growth 39% with error of 2. And the sum of Certainty Connectedness and Contributions 61% with error of 2"
                         "If all of these conditions are met, then the system is cosidered balanced, if not - not balanced"
-                        "The feedback structure should be like that: first is the entity name, then explanation , and the its score at the end, for example: Signifance: 'Explanation' . Score: 25 , then there will be the sums of each combination where it will show if it's within the error margin or not, for example: Certainty + Variation + Coonectedness= 67 (the ideal result is 80+-2, it is unbalanced)"
+                        "The feedback structure should be like that: first is the entity name, then explanation , and the its score at the end, for example: Signifance: 'Explanation' . Score: 25% , then there will be the sums of each combination where it will show if it's within the error margin or not, for example: Certainty + Variation + Coonectedness= 67% (the ideal result is 80%+-2, it is unbalanced)"
                         "And the final advice should tell if system is balanced or not balanced. And if it is not balanced give the quick explanation why it is not balanced and how to fix it."
+                        "The sum shouldn't exceed 100%"
                     ),
                 },
                 {
