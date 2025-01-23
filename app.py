@@ -23,7 +23,7 @@ limiter = Limiter(
 )
 
 # Load test data from a .txt file
-with open("trainingData.txt", "r",encoding="utf-8") as f:
+with open("trainingData2.txt", "r",encoding="utf-8") as f:
     test_data_content = f.read()
     
 
@@ -229,4 +229,4 @@ def image_tool():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
